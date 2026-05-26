@@ -129,11 +129,18 @@ jobs:
         service: ${{ fromJson(needs.detect-changes.outputs.services) }}
       fail-fast: false
     steps:
-      - name: Configure AWS credentials (target environment account)
+      - name: Configure AWS credentials (shared account via OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.SHARED_ACCOUNT_ID }}:role/online-boutique-github-actions-deploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Assume role in target environment account (role chaining)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ needs.setup.outputs.account_id }}:role/GitHubActions-Deploy-Role
           aws-region: ${{ env.AWS_REGION }}
+          role-chaining: true
 
       - name: Force ECS service redeployment
         if: matrix.service != 'loadgenerator'
