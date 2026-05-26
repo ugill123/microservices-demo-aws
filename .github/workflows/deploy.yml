@@ -161,16 +161,59 @@ jobs:
             --region ${{ env.AWS_REGION }}
 
   # ===========================================================================
+  # Restart orchestrators last (refresh their gRPC connections to backends)
+  # ===========================================================================
+  refresh-orchestrators:
+    needs: [setup, detect-changes, deploy]
+    if: needs.detect-changes.outputs.services != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [checkoutservice, frontend]
+      fail-fast: false
+    steps:
+      - name: Configure AWS credentials (shared account via OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.SHARED_ACCOUNT_ID }}:role/online-boutique-github-actions-deploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Assume role in target environment account
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ needs.setup.outputs.account_id }}:role/GitHubActions-Deploy-Role
+          aws-region: ${{ env.AWS_REGION }}
+          role-chaining: true
+          role-skip-session-tagging: true
+
+      - name: Force restart of orchestrator service
+        run: |
+          echo "Restarting ${{ matrix.service }} to refresh gRPC connections to backends..."
+          aws ecs update-service \
+            --cluster ${{ needs.setup.outputs.cluster_name }} \
+            --service ${{ needs.setup.outputs.cluster_name }}-${{ matrix.service }} \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Wait for orchestrator stability
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ needs.setup.outputs.cluster_name }} \
+            --services ${{ needs.setup.outputs.cluster_name }}-${{ matrix.service }} \
+            --region ${{ env.AWS_REGION }}
+
+  # ===========================================================================
   # Final summary
   # ===========================================================================
   summary:
-    needs: [setup, deploy]
+    needs: [setup, deploy, refresh-orchestrators]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Print summary
         run: |
-          echo "Environment: ${{ needs.setup.outputs.environment }}"
-          echo "Account:     ${{ needs.setup.outputs.account_id }}"
-          echo "Cluster:     ${{ needs.setup.outputs.cluster_name }}"
-          echo "Status:      ${{ needs.deploy.result }}"
+          echo "Environment:    ${{ needs.setup.outputs.environment }}"
+          echo "Account:        ${{ needs.setup.outputs.account_id }}"
+          echo "Cluster:        ${{ needs.setup.outputs.cluster_name }}"
+          echo "Deploy:         ${{ needs.deploy.result }}"
+          echo "Orchestrators:  ${{ needs.refresh-orchestrators.result }}"
