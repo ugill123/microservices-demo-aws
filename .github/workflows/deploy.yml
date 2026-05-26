@@ -141,6 +141,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ needs.setup.outputs.account_id }}:role/GitHubActions-Deploy-Role
           aws-region: ${{ env.AWS_REGION }}
           role-chaining: true
+          role-skip-session-tagging: true
 
       - name: Force ECS service redeployment
         if: matrix.service != 'loadgenerator'
