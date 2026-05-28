@@ -78,3 +78,19 @@ metrics:
     aws_metric_name: CacheMisses
     aws_dimensions: [CacheClusterId]
     aws_statistics: [Sum]
+
+  # ElastiCache by ReplicationGroupId (replication groups publish here too)
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: CPUUtilization
+    aws_dimensions: [ReplicationGroupId]
+    aws_statistics: [Average, Maximum]
+
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: DatabaseMemoryUsagePercentage
+    aws_dimensions: [ReplicationGroupId]
+    aws_statistics: [Average]
+
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: CurrConnections
+    aws_dimensions: [ReplicationGroupId]
+    aws_statistics: [Average, Maximum]
