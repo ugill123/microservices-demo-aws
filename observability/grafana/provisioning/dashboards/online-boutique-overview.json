@@ -304,7 +304,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
-          "expr": "aws_elasticache_curr_connections_average",
+          "expr": "aws_elasticache_currconnections_average",
           "legendFormat": "{{cache_cluster_id}}",
           "refId": "A"
         }
@@ -361,7 +361,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
-          "expr": "aws_elasticache_database_memory_usage_percentage_average",
+          "expr": "aws_elasticache_databasememoryusagepercentage_average",
           "legendFormat": "{{cache_cluster_id}}",
           "refId": "A"
         }
