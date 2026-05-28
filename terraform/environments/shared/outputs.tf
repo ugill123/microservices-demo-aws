@@ -14,3 +14,20 @@ output "github_actions_role_arn" {
   description = "IAM role ARN for GitHub Actions"
   value       = module.github_oidc.deploy_role_arn
 }
+
+
+# --- Observability Server ---
+output "observability_grafana_url" {
+  description = "Grafana UI URL"
+  value       = module.observability_server.grafana_url
+}
+
+output "observability_prometheus_url" {
+  description = "Prometheus UI URL"
+  value       = module.observability_server.prometheus_url
+}
+
+output "observability_ssm_command" {
+  description = "Connect to observability server via SSM"
+  value       = module.observability_server.ssm_session_command
+}

@@ -64,3 +64,15 @@ variable "env_account_ids" {
   type        = list(string)
   default     = []
 }
+
+# --- Observability Server ---
+variable "allowed_ip_cidr" {
+  description = "Your public IP CIDR for accessing Grafana/Prometheus (e.g., 1.2.3.4/32)"
+  type        = string
+}
+
+variable "monitored_account_ids" {
+  description = "Account IDs the observability server scrapes via cross-account assume role"
+  type        = list(string)
+  default     = []
+}

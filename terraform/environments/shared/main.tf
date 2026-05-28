@@ -23,3 +23,16 @@ module "github_oidc" {
   github_repo        = var.github_repo
   target_account_ids = var.env_account_ids
 }
+
+
+# =============================================================================
+# Observability Server (Prometheus + Grafana on EC2)
+# =============================================================================
+module "observability_server" {
+  source = "../../modules/observability_server"
+
+  project_name           = var.project_name
+  aws_region             = var.aws_region
+  allowed_ip_cidr        = var.allowed_ip_cidr
+  monitored_account_ids  = var.monitored_account_ids
+}

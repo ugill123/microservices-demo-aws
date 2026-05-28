@@ -143,3 +143,10 @@ variable "shared_account_id" {
   type        = string
   default     = "099576492599"
 }
+
+
+variable "observability_server_role_arn" {
+  description = "ARN of the EC2 IAM role from the shared account (observability server)"
+  type        = string
+  default     = "arn:aws:iam::099576492599:role/online-boutique-observability-server"
+}

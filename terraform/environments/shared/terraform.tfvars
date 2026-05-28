@@ -24,3 +24,13 @@ env_account_ids = [
   "716911968999",
   "288280712573"
 ]
+
+
+# --- Observability Server ---
+# Replace with YOUR public IP — find it via: curl ifconfig.me
+allowed_ip_cidr = "0.0.0.0/0"  # CHANGE THIS to your IP/32 for security
+
+# Accounts to monitor (start with dev only, add prod later)
+monitored_account_ids = [
+  "723239944580"  # dev
+]

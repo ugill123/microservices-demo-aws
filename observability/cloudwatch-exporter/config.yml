@@ -1,0 +1,80 @@
+# CloudWatch Exporter Config
+# Scrapes AWS metrics from the DEV account via cross-account role assumption.
+#
+# Reference: https://github.com/prometheus/cloudwatch_exporter
+
+region: us-east-1
+
+# Assume role into dev account to read CloudWatch metrics
+sts_region: us-east-1
+role_arn: arn:aws:iam::723239944580:role/Observability-CloudWatch-Read
+
+metrics:
+  # =========================================================================
+  # ECS — service-level CPU and memory utilization
+  # =========================================================================
+  - aws_namespace: AWS/ECS
+    aws_metric_name: CPUUtilization
+    aws_dimensions: [ClusterName, ServiceName]
+    aws_statistics: [Average, Maximum]
+
+  - aws_namespace: AWS/ECS
+    aws_metric_name: MemoryUtilization
+    aws_dimensions: [ClusterName, ServiceName]
+    aws_statistics: [Average, Maximum]
+
+  # =========================================================================
+  # ALB — request count, errors, latency
+  # =========================================================================
+  - aws_namespace: AWS/ApplicationELB
+    aws_metric_name: RequestCount
+    aws_dimensions: [LoadBalancer]
+    aws_statistics: [Sum]
+
+  - aws_namespace: AWS/ApplicationELB
+    aws_metric_name: HTTPCode_Target_2XX_Count
+    aws_dimensions: [LoadBalancer]
+    aws_statistics: [Sum]
+
+  - aws_namespace: AWS/ApplicationELB
+    aws_metric_name: HTTPCode_Target_4XX_Count
+    aws_dimensions: [LoadBalancer]
+    aws_statistics: [Sum]
+
+  - aws_namespace: AWS/ApplicationELB
+    aws_metric_name: HTTPCode_Target_5XX_Count
+    aws_dimensions: [LoadBalancer]
+    aws_statistics: [Sum]
+
+  - aws_namespace: AWS/ApplicationELB
+    aws_metric_name: TargetResponseTime
+    aws_dimensions: [LoadBalancer]
+    aws_statistics: [Average, p99]
+
+  # =========================================================================
+  # ElastiCache — Redis health
+  # =========================================================================
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: CPUUtilization
+    aws_dimensions: [CacheClusterId]
+    aws_statistics: [Average, Maximum]
+
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: DatabaseMemoryUsagePercentage
+    aws_dimensions: [CacheClusterId]
+    aws_statistics: [Average]
+
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: CurrConnections
+    aws_dimensions: [CacheClusterId]
+    aws_statistics: [Average, Maximum]
+
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: CacheHits
+    aws_dimensions: [CacheClusterId]
+    aws_statistics: [Sum]
+
+  - aws_namespace: AWS/ElastiCache
+    aws_metric_name: CacheMisses
+    aws_dimensions: [CacheClusterId]
+    aws_statistics: [Sum]

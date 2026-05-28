@@ -231,3 +231,14 @@ module "github_actions_role" {
 
   shared_account_id = var.shared_account_id
 }
+
+
+# =============================================================================
+# Cross-Account Observability Role
+# Allows the observability EC2 in shared account to read CloudWatch metrics
+# =============================================================================
+module "observability_read" {
+  source = "../../modules/cross_account_observability"
+
+  observability_server_role_arn = var.observability_server_role_arn
+}
